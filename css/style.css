@@ -1,0 +1,354 @@
+:root {
+    --primary-blue: #2196F3;
+    --deep-blue: #1976D2;
+    --light-blue-bg: #ffffff;
+    --border-color: #64B5F6;
+    --panel-bg: #ffffff;
+    --text-main: #333;
+    --border-radius: 4px;
+    --gap: 10px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Microsoft YaHei", sans-serif;
+    color: var(--text-main);
+    background-color: #ffffff;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.layout-grid {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    padding: var(--gap);
+    background-color: var(--light-blue-bg);
+    overflow: hidden;
+}
+
+/* Resizer styles */
+.resizer {
+    background-color: #f0f0f0;
+    /* 极淡的底色增加引导 */
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+.resizer:hover,
+.resizer.dragging {
+    background-color: rgba(33, 150, 243, 0.3);
+}
+
+.resizer-h {
+    width: 6px;
+    cursor: col-resize;
+    margin: 0 -3px;
+    /* 负边距增加点击区域 */
+}
+
+.resizer-v {
+    height: 6px;
+    cursor: row-resize;
+    margin: -3px 0;
+}
+
+/* Common Panel Style */
+.panel-style {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.panel-header {
+    background-color: #2196F3;
+    color: #ffffff;
+    padding: 8px 15px;
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom: 1px solid var(--deep-blue);
+    flex-shrink: 0;
+}
+
+/* Left Sidebar */
+.left-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: var(--gap);
+    width: 20%;
+    /* 初始宽度 */
+    min-width: 250px;
+    flex-shrink: 0;
+}
+
+/* AI数字人 + 执行过程 合并容器 */
+.main-display-area {
+    flex: 0 0 85%;
+    /* 25% + 60% */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #fff;
+}
+
+/* AI数字人区 */
+.avatar-box {
+    flex: 0 0 29.4%;
+    /* 在 85% 中占比约 25/85 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid #f0f0f0;
+    /* 极淡的分割线，或可完全移除 */
+}
+
+.avatar-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 智能体执行过程展示区 */
+.process-box {
+    flex: 1;
+    /* 占据剩余空间 */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.process-content {
+    padding: 10px;
+    font-family: monospace;
+    font-size: 13px;
+    color: #555;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.log-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.log-list li {
+    margin-bottom: 8px;
+    padding: 4px 0;
+    border-bottom: 1px dashed #eee;
+}
+
+/* 对话输入框 15% */
+.chat-input-box {
+    flex: 0 0 calc(15% - var(--gap));
+    display: flex;
+    padding: 12px;
+}
+
+.chat-input-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    gap: 10px;
+    align-items: center;
+}
+
+.chat-input {
+    flex: 1;
+    height: 100%;
+    padding: 12px 16px;
+    border: 1px solid #dde6ed;
+    border-radius: var(--border-radius);
+    font-size: 15px;
+    outline: none;
+    background-color: #fcfcfc;
+    resize: none;
+    /* 禁止手动缩放 */
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+.chat-input::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-input::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 3px;
+}
+
+.chat-input:focus {
+    border-color: var(--primary-blue);
+    background-color: #fff;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+.chat-send-btn {
+    padding: 0 20px;
+    height: 42px;
+    /* 固定按钮高度以确保居中效果明显 */
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-send-btn:hover {
+    background-color: var(--deep-blue);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chat-send-btn:active {
+    transform: translateY(0);
+}
+
+/* Right Main Content */
+.right-main {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: 1;
+    min-width: 0;
+}
+
+.top-section {
+    display: flex;
+    flex-direction: row;
+    height: 50%;
+    /* 初始高度 */
+    min-height: 100px;
+}
+
+.conclusion-box {
+    width: 40%;
+    /* 初始宽度 */
+    min-width: 250px;
+    flex-shrink: 0;
+}
+
+.conclusion-inner {
+    padding: 15px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.conclusion-text {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    font-weight: 500;
+    color: #003a8c;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    flex: 1;
+}
+
+.stat-card {
+    background-color: #E3F2FD;
+    border: 1px solid #64B5F6;
+    border-radius: 4px;
+    padding: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2196F3;
+}
+
+.map-box {
+    flex: 1;
+    position: relative;
+    padding: 0;
+    min-width: 300px;
+}
+
+.panel-header-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 99;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-weight: bold;
+    color: #333;
+    pointer-events: none;
+}
+
+#viewDiv {
+    width: 100%;
+    height: 100%;
+    outline: none;
+}
+
+#viewDiv:focus,
+#viewDiv *:focus,
+.map-box:focus-within {
+    outline: none;
+    box-shadow: none;
+}
+
+.bottom-section {
+    flex: 1;
+    /* Bottom half */
+    min-height: 0;
+}
+
+#chartDiv {
+    flex: 1;
+    width: 100%;
+}
+
+.current-time-display {
+    margin-top: 10px;
+    text-align: right;
+    font-size: 12px;
+    color: #999;
+}

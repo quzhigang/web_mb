@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>蟒河口水库</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <div id="main" style="width: 100%;height:800px;"></div>
+    <script type="text/javascript">
+        var chartDom = document.getElementById('main');
+        var myChart = echarts.init(chartDom, null, {renderer: 'svg'});
+        var option;
+
+        // 1. Data Processing
+        const waterLevelDataStr = `时间,库水位(m),入库流量(m³/s),出库流量(m³/s)
+2021/7/19 08:00,284.34,5,0
+2021/7/20 08:00,303.33,12,0
+2021/7/20 11:00,304.32,28.7,30
+2021/7/20 13:00,304.37,40,30
+2021/7/20 16:00,305,50.4,30
+2021/7/20 16:50,305.3,46.7,0
+2021/7/20 22:00,311.79,134,0
+2021/7/21 00:44,314,96.5,106
+2021/7/21 02:00,314.17,72.2,133
+2021/7/21 03:00,314.11,107,123
+2021/7/21 04:00,314.04,119,123
+2021/7/21 05:00,313.98,119,103
+2021/7/21 06:00,313.93,122,95.5
+2021/7/21 07:00,313.9,102,91
+2021/7/21 08:00,313.85,91.3,83
+2021/7/21 09:00,313.83,88.2,81.4
+2021/7/21 10:00,313.79,81.6,76
+2021/7/21 11:00,313.77,80,73
+2021/7/21 12:00,313.73,76,72
+2021/7/21 13:00,313.72,70.2,67
+2021/7/21 19:00,313.62,54,55
+2021/7/21 20:00,313.61,53,54
+2021/7/22 08:00,313.6,52,52
+2021/7/22 16:00,313.46,68,74
+2021/7/22 17:00,314.5,440,182
+2021/7/22 21:40,314.03,170,111
+2021/7/22 22:30,314.01,172,150
+2021/7/22 23:00,313.95,140,148
+2021/7/23 01:50,313.58,132,108
+2021/7/23 05:00,313.5,105,66.8
+2021/7/23 08:00,313.47,64.9,63.7
+2021/7/23 11:50,313.31,59.4,63.8
+2021/7/23 18:40,313.04,45,53.5
+2021/7/24 08:00,311.3,32,45`;
+
+        const rainDataStr = `时间,降雨量(mm)
+2021/7/19 08:00,4.9
+2021/7/19 09:00,10.3
+2021/7/19 10:00,9.1
+2021/7/19 11:00,2.5
+2021/7/19 12:00,1.2
+2021/7/19 13:00,2
+2021/7/19 14:00,2.5
+2021/7/19 15:00,1.1
+2021/7/19 16:00,1.2
+2021/7/19 17:00,4
+2021/7/19 18:00,2.5
+2021/7/19 19:00,0.5
+2021/7/19 20:00,0.3
+2021/7/19 21:00,1
+2021/7/19 22:00,1.1
+2021/7/19 23:00,0.4
+2021/7/20 00:00,1.1
+2021/7/20 01:00,1.9
+2021/7/20 02:00,2.9
+2021/7/20 03:00,3.8
+2021/7/20 04:00,2.2
+2021/7/20 05:00,0.9
+2021/7/20 06:00,4.3
+2021/7/20 07:00,6.7
+2021/7/20 08:00,7.1
+2021/7/20 09:00,7
+2021/7/20 10:00,3.8
+2021/7/20 11:00,10.7
+2021/7/20 12:00,12.4
+2021/7/20 13:00,13.4
+2021/7/20 14:00,12.9
+2021/7/20 15:00,7.3
+2021/7/20 16:00,7.6
+2021/7/20 17:00,7.6
+2021/7/20 18:00,6.1
+2021/7/20 19:00,5.2
+2021/7/20 20:00,3.2
+2021/7/20 21:00,5.3
+2021/7/20 22:00,6.3
+2021/7/20 23:00,2.1
+2021/7/21 00:00,2.6
+2021/7/21 01:00,1.9
+2021/7/21 02:00,3.6
+2021/7/21 03:00,1.3
+2021/7/21 04:00,1.6
+2021/7/21 05:00,1.8
+2021/7/21 06:00,2
+2021/7/21 07:00,3.3
+2021/7/21 08:00,2
+2021/7/21 09:00,0.9
+2021/7/21 10:00,0.4
+2021/7/21 11:00,0.3
+2021/7/21 12:00,1.3
+2021/7/21 13:00,1.4
+2021/7/21 14:00,2.6
+2021/7/21 15:00,2.7
+2021/7/21 16:00,1.6
+2021/7/21 17:00,0.5
+2021/7/21 18:00,1.3
+2021/7/21 19:00,0.3
+2021/7/21 20:00,0
+2021/7/21 21:00,0.1
+2021/7/21 22:00,0
+2021/7/21 23:00,0.1
+2021/7/22 00:00,0.1
+2021/7/22 01:00,1.2
+2021/7/22 02:00,1.8
+2021/7/22 03:00,2.4
+2021/7/22 04:00,0.4
+2021/7/22 05:00,0.3
+2021/7/22 06:00,0.2
+2021/7/22 07:00,0
+2021/7/22 08:00,0.1
+2021/7/22 09:00,0.3
+2021/7/22 10:00,0.2
+2021/7/22 11:00,0.4
+2021/7/22 12:00,0.3
+2021/7/22 13:00,1.1
+2021/7/22 14:00,2.4
+2021/7/22 15:00,3.4
+2021/7/22 16:00,2.7
+2021/7/22 17:00,1.7
+2021/7/22 18:00,3.3
+2021/7/22 19:00,4.9
+2021/7/22 20:00,6
+2021/7/22 21:00,3.7
+2021/7/22 22:00,0.4
+2021/7/22 23:00,0.1
+2021/7/23 00:00,0.2
+2021/7/23 01:00,0
+2021/7/23 02:00,0.4
+2021/7/23 03:00,0.1
+2021/7/23 04:00,0.7
+2021/7/23 05:00,3.8
+2021/7/23 06:00,4.6
+2021/7/23 07:00,1.6
+2021/7/23 08:00,0.8
+2021/7/23 09:00,0.3
+2021/7/23 10:00,0.1
+2021/7/23 11:00,0.1
+2021/7/23 12:00,0
+2021/7/23 13:00,0
+2021/7/23 14:00,0
+2021/7/23 15:00,0
+2021/7/23 16:00,0
+2021/7/23 17:00,0
+2021/7/23 18:00,0
+2021/7/23 19:00,0
+2021/7/23 20:00,0
+2021/7/23 21:00,0
+2021/7/23 22:00,0.1
+2021/7/23 23:00,0.1
+2021/7/24 00:00,0
+2021/7/24 01:00,0
+2021/7/24 02:00,0
+2021/7/24 03:00,0
+2021/7/24 04:00,1.6
+2021/7/24 05:00,0.3
+2021/7/24 06:00,0.1
+2021/7/24 07:00,3.3
+2021/7/24 08:00,0.2`;
+
+        const processData = (str) => {
+            const lines = str.trim().split('\n').slice(1);
+            return lines.map(line => {
+                const parts = line.split(',');
+                return [new Date(parts[0]).getTime(), ...parts.slice(1).map(parseFloat)];
+            });
+        };
+
+        const waterLevelRawData = processData(waterLevelDataStr);
+        const rainRawData = processData(rainDataStr);
+
+        const waterLevelData = waterLevelRawData.map(d => [d[0], d[1]]);
+        const inflowData = waterLevelRawData.map(d => [d[0], d[2]]);
+        const outflowData = waterLevelRawData.map(d => [d[0], d[3]]);
+        const rainData = rainRawData.map(d => [d[0], d[1]]);
+
+        // 2. Calculate axis range and peaks
+        const calcAxisRange = (data, interval) => {
+            const values = data.map(d => d[1]).filter(v => !isNaN(v));
+            if (values.length === 0) return { min: 0, max: interval };
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            return {
+                min: Math.floor(min / interval) * interval,
+                max: Math.ceil(max / interval) * interval
+            };
+        };
+
+        const flowRange = calcAxisRange([...inflowData, ...outflowData], 50);
+        const waterLevelRange = calcAxisRange(waterLevelData, 10);
+        const rainRange = calcAxisRange(rainData, 5);
+
+        const findPeak = (data) => {
+            if (data.length === 0) return null;
+            let peak = data[0];
+            for (let i = 1; i < data.length; i++) {
+                if (data[i][1] > peak[1]) {
+                    peak = data[i];
+                }
+            }
+            return { coord: peak };
+        };
+        
+        const peakInflow = findPeak(inflowData);
+        const peakOutflow = findPeak(outflowData);
+        const peakWaterLevel = findPeak(waterLevelData);
+        const peakRain = findPeak(rainData);
+
+        // 3. Build ECharts option
+        option = {
+            backgroundColor: '#fff',
+            legend: {
+                data: ['降雨量', '入库流量', '出库流量', '库水位'],
+                top: '5%',
+                right: '10%',
+                textStyle: {
+                    fontWeight: 'bold',
+                    fontSize: 14
+                }
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            grid: [
+                { top: '15%', height: '25%', left: '10%', right: '10%' },
+                { top: '50%', height: '40%', left: '10%', right: '10%' }
+            ],
+            xAxis: [
+                {
+                    type: 'time',
+                    gridIndex: 0,
+                    axisLabel: { show: false },
+                    axisTick: { show: false },
+                    axisPointer: {
+                        show: true,
+                        lineStyle: {
+                            color: '#999',
+                            width: 1,
+                            type: 'solid'
+                        }
+                    }
+                },
+                {
+                    type: 'time',
+                    gridIndex: 1,
+                    axisLabel: {
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        formatter: '{MM}/{dd}\n{HH}:{mm}',
+                        interval: 12 * 3600 * 1000
+                    },
+                    axisPointer: {
+                        show: true,
+                        lineStyle: {
+                            color: '#999',
+                            width: 1,
+                            type: 'solid'
+                        }
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '降雨(mm)',
+                    nameTextStyle: { fontWeight: 'bold', fontSize: 14 },
+                    gridIndex: 0,
+                    inverse: true,
+                    min: rainRange.min,
+                    max: rainRange.max,
+                    axisLabel: { fontWeight: 'bold', fontSize: 12 },
+                    axisLine: { show: true, lineStyle: { color: 'black' } }
+                },
+                {
+                    type: 'value',
+                    name: '流量(m³/s)',
+                    nameTextStyle: { fontWeight: 'bold', fontSize: 14 },
+                    gridIndex: 1,
+                    min: flowRange.min,
+                    max: flowRange.max,
+                    axisLabel: { fontWeight: 'bold', fontSize: 12 },
+                    axisLine: { show: true, lineStyle: { color: 'black' } }
+                },
+                {
+                    type: 'value',
+                    name: '水位(m)',
+                    nameTextStyle: { fontWeight: 'bold', fontSize: 14 },
+                    gridIndex: 1,
+                    position: 'right',
+                    min: waterLevelRange.min,
+                    max: waterLevelRange.max,
+                    axisLabel: { fontWeight: 'bold', fontSize: 12 },
+                    axisLine: { show: true, lineStyle: { color: 'black' } }
+                }
+            ],
+            series: [
+                {
+                    name: '降雨量',
+                    type: 'bar',
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                    data: rainData,
+                    itemStyle: { color: '#5470c6' },
+                    markPoint: peakRain ? {
+                        data: [{
+                            coord: peakRain.coord,
+                            value: peakRain.coord[1] + ' mm',
+                            symbolSize: 8,
+                            label: {
+                                offset: [0, -20]
+                            }
+                        }],
+                        symbol: 'circle',
+                        itemStyle: { color: '#5470c6' }
+                    } : {}
+                },
+                {
+                    name: '入库流量',
+                    type: 'line',
+                    xAxisIndex: 1,
+                    yAxisIndex: 1,
+                    data: inflowData,
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { width: 3, color: 'orangered' },
+                    markPoint: peakInflow ? {
+                        data: [{
+                            coord: peakInflow.coord,
+                            value: peakInflow.coord[1] + ' m³/s',
+                            symbolSize: 8
+                        }],
+                        symbol: 'circle',
+                        itemStyle: { color: 'orangered' }
+                    } : {}
+                },
+                {
+                    name: '出库流量',
+                    type: 'line',
+                    xAxisIndex: 1,
+                    yAxisIndex: 1,
+                    data: outflowData,
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { width: 3, color: 'green' },
+                     markPoint: peakOutflow ? {
+                        data: [{
+                            coord: peakOutflow.coord,
+                            value: peakOutflow.coord[1] + ' m³/s',
+                            symbolSize: 8
+                        }],
+                        symbol: 'circle',
+                        itemStyle: { color: 'green' }
+                    } : {}
+                },
+                {
+                    name: '库水位',
+                    type: 'line',
+                    xAxisIndex: 1,
+                    yAxisIndex: 2,
+                    data: waterLevelData,
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { width: 3, color: 'blue', type: 'dashed' },
+                     markPoint: peakWaterLevel ? {
+                        data: [{
+                            coord: peakWaterLevel.coord,
+                            value: peakWaterLevel.coord[1] + ' m',
+                            symbolSize: 8
+                        }],
+                        symbol: 'circle',
+                        itemStyle: { color: 'blue' }
+                    } : {}
+                }
+            ]
+        };
+
+        option && myChart.setOption(option);
+    </script>
+</body>
+</html>
