@@ -4,42 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>水库洪水预报结果展示</title>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
     <link rel="stylesheet" href="css/style.css">
-    <script src="ref/echarts.min.js"></script>
-    <script src="https://js.arcgis.com/4.29/"></script>
     <link rel="icon" href="data:;base64,=">
 </head>
 <body>
     <div class="layout-grid">
-        <!-- Main Content (Now on the left) -->
-        <main class="right-main">
-            <!-- Top Row -->
-            <div class="top-section">
-                <div class="conclusion-box panel-style">
-                    <div class="conclusion-inner">
-                        <div id="conclusionText" class="conclusion-text"></div>
-                        <div id="statsGrid" class="stats-grid"></div>
-                        <div class="current-time-display" id="currentTime"></div>
-                    </div>
-                </div>
-
-                <!-- Horizontal Resizer (Conclusion / Map) -->
-                <div class="resizer resizer-h" id="resizer-top"></div>
-
-                <div class="map-box panel-style">
-                    <div id="viewDiv"></div>
-                </div>
-            </div>
-
-            <!-- Horizontal Resizer (Top section / Bottom section) -->
-            <div class="resizer resizer-v" id="resizer-main-v"></div>
-
-            <!-- Bottom Row -->
-            <div class="bottom-section panel-style">
-                <div id="chartDiv"></div>
-            </div>
-        </main>
+        <!-- Main Content (iframe) -->
+        <div class="iframe-container">
+            <iframe id="mainContentFrame" src="res_module/index.html" frameborder="0"></iframe>
+        </div>
 
         <!-- Vertical Resizer (Main content / Sidebar) -->
         <div class="resizer resizer-h" id="resizer-sidebar"></div>
@@ -85,8 +58,6 @@
         </aside>
     </div>
 
-    <script src="js/rain.js"></script>
     <script src="js/resizer.js"></script>
-    <script type="module" src="js/main.js"></script>
 </body>
 </html>

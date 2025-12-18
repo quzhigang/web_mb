@@ -1,14 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // resizer-sidebar is now controlling the RIGHT sidebar, so dragging left (negative delta) should INCREASE width.
-    // We set invertDelta = true.
-    initResizer('resizer-sidebar', 'aside.left-sidebar', 'width', true, true);
+    // Initialize resizers for the main content area
+    initResizer('resizer-top', '.conclusion-box', 'width', true, false);
+    initResizer('resizer-main-v', '.top-section', 'height', false, false);
 
     function initResizer(resizerId, targetSelector, dimension, isHorizontal, invertDelta = false) {
         const resizer = document.getElementById(resizerId);
         const target = document.querySelector(targetSelector);
-        const iframe = document.getElementById('mainContentFrame');
 
         if (!resizer || !target) return;
+
+        // Create overlay for capturing mouse events during drag
+        let overlay = null;
 
         resizer.addEventListener('mousedown', function (e) {
             e.preventDefault();
@@ -20,10 +22,10 @@ document.addEventListener('DOMContentLoaded', function () {
             resizer.classList.add('dragging');
             document.body.style.cursor = isHorizontal ? 'col-resize' : 'row-resize';
 
-            // Disable iframe pointer events during drag to prevent event loss
-            if (iframe) {
-                iframe.style.pointerEvents = 'none';
-            }
+            // Create overlay to capture mouse events over map/chart elements
+            overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;cursor:' + (isHorizontal ? 'col-resize' : 'row-resize');
+            document.body.appendChild(overlay);
 
             function onMouseMove(e) {
                 let delta;
@@ -42,29 +44,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 target.style[dimension] = newDim + 'px';
 
                 window.dispatchEvent(new Event('resize'));
-
-                if (iframe && iframe.contentWindow) {
-                    iframe.contentWindow.dispatchEvent(new Event('resize'));
-                }
             }
 
             function onMouseUp() {
                 resizer.classList.remove('dragging');
                 document.body.style.cursor = 'default';
 
-                // Re-enable iframe pointer events
-                if (iframe) {
-                    iframe.style.pointerEvents = '';
+                // Remove overlay
+                if (overlay && overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                    overlay = null;
                 }
 
                 document.removeEventListener('mousemove', onMouseMove);
                 document.removeEventListener('mouseup', onMouseUp);
 
                 window.dispatchEvent(new Event('resize'));
-
-                if (iframe && iframe.contentWindow) {
-                    iframe.contentWindow.dispatchEvent(new Event('resize'));
-                }
             }
 
             document.addEventListener('mousemove', onMouseMove);
