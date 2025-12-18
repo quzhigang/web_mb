@@ -53,13 +53,26 @@ async function fetchRainProcess() {
     const url = `${API_URLS.rainProcess}?planCode=${DEFAULT_PARAMS.planCode}&stcd=${DEFAULT_PARAMS.stcd}`;
     try {
         const response = await fetch(url);
-        if (!response.ok) return null;
+        if (!response.ok) return getDefaultRainData();
         const result = await response.json();
-        return result.success ? result.data : null;
+        return result.success ? result.data : (result.data || getDefaultRainData());
     } catch (e) {
-        console.warn("Rain API failed:", e);
-        return null;
+        console.warn("Rain API failed (possibly CORS). Using default data from js/rain.js.", e);
+        return getDefaultRainData();
     }
+}
+
+// 从 js/rain.js (window.rain_res) 获取默认降雨数据
+function getDefaultRainData() {
+    if (window.rain_res && window.rain_res.data && window.rain_res.data.t) {
+        const { t, v } = window.rain_res.data;
+        return t.map((time, index) => ({
+            time: time,
+            value: parseFloat(v[index] || 0)
+        }));
+    }
+    console.warn("Default rain data (js/rain.js) not found or invalid format.");
+    return [];
 }
 
 function processAllData(floodRaw, rainData) {
@@ -144,18 +157,15 @@ function renderChart(data, rainData) {
     const option = {
         backgroundColor: '#fff',
         title: {
-            text: '盘石头水库洪水结果',
-            left: '3%',
-            top: 10,
-            textStyle: { fontSize: 16, fontWeight: 'bold' }
+            show: false // 去掉图表名称
         },
         legend: {
             data: ['降雨量', '入库流量', '出库流量', '库水位'],
-            top: 12,
-            right: '3%',
+            top: 2, // 尽量占用少的高度
+            right: 70,
             orient: 'horizontal',
             textStyle: { fontWeight: 'bold', fontSize: 12 },
-            itemGap: 20
+            itemGap: 15
         },
         tooltip: {
             trigger: 'axis',
@@ -166,15 +176,15 @@ function renderChart(data, rainData) {
             label: { backgroundColor: '#777' }
         },
         grid: [
-            { top: '15%', height: '22%', left: '5%', right: '5%', containLabel: true },
-            { top: '48%', height: '42%', left: '5%', right: '5%', containLabel: true }
+            { top: 35, height: 130, left: 70, right: 70 }, // 降雨图表
+            { top: 240, bottom: 65, left: 70, right: 70 } // 进一步增加间距 (240 - (35+130) = 75px)
         ],
         xAxis: [
             {
                 type: 'time',
                 gridIndex: 0,
                 axisLabel: { show: false },
-                axisLine: { onZero: false, lineStyle: { color: '#333' } },
+                axisLine: { show: false }, // 去掉底边黑线
                 axisTick: { show: false },
                 splitLine: { show: true, lineStyle: { type: 'dashed' } }
             },
